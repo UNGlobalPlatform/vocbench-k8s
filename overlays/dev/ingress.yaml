@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata: 
+  name: vocbench-ingress-tls
+  namespace: vocbench
+spec: 
+  rules:
+  - host: vocbench-dev.officialstatistics.org
+    http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: vocbench3
+          servicePort: 80
+status:
+  loadBalancer: {}
