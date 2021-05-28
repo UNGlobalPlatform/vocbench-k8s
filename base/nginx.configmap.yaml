@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-conf
+data:
+  nginx.conf: |
+    user nginx;
+    worker_processes  4;
+    error_log  /var/log/nginx/error.log;
+    events {
+      worker_connections  10240;
+    }
+    http {
+      sendfile on;
+      default_type  application/octet-stream;
+      proxy_read_timeout 300;
+
+      upstream voc_server {
+        server 127.0.0.1:1979;
+      }
+      
+      server {
+          listen 0.0.0.0:80;
+          listen 127.0.0.1:80;
+          listen [::]:80;
+          location = / {
+            default_type text/html;
+            return 200 "<!DOCTYPE html>\n";
+          }
+          location / {
+            proxy_pass  http://voc_server/;
+          }
+      }
+    }

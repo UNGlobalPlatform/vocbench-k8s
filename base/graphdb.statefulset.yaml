@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: graphdb
+  labels:
+    app: graphdb
+spec:
+  ports:
+  - port: 7200
+    name: db
+  type: ClusterIP
+  selector:
+    app: graphdb
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: graphdb
+spec:
+  selector:
+    matchLabels:
+      app: graphdb # has to match .spec.template.metadata.labels
+  serviceName: "graphdb"
+  replicas: 1 # by default is 1
+  template:
+    metadata:
+      labels:
+        app: graphdb # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: graphdb
+        image: cslovell/graphdb-with-st-sails:9.1.1-se
+        ports:
+        - containerPort: 7200
+          name: db
+        volumeMounts:
+        - name: db-vol
+          mountPath: /opt/graphdb/home
+  volumeClaimTemplates:
+  - metadata:
+      name: db-vol
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: standard
+      resources:
+        requests:
+          storage: 15Gi
