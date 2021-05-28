@@ -8,3 +8,6 @@ bases:
 
 patchesStrategicMerge: 
   - ingress.yaml
+
+resources:
+  - namespace
