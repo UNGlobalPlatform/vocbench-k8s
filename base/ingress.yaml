@@ -3,6 +3,9 @@ kind: Ingress
 metadata: 
   name: vocbench-ingress-tls
   namespace: vocbench
+  annotations:  
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-staging
 spec: 
   rules:
   - host: vocbench.officialstatistics.org
@@ -12,5 +15,7 @@ spec:
         backend:
           serviceName: vocbench3
           servicePort: 80
-status:
-  loadBalancer: {}
+  tls:
+  - hosts:
+    - vocbench.officialstatistics.org
+    secretName: echo-tls
